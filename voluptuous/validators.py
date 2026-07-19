@@ -937,8 +937,12 @@ class ExactSequence(object):
         self._schemas = [Schema(val, **kwargs) for val in validators]
 
     def __call__(self, v):
-        if not isinstance(v, (list, tuple)) or len(v) != len(self._schemas):
-            raise ExactSequenceInvalid(self.msg)
+        if not isinstance(v, (list, tuple)):
+            raise ExactSequenceInvalid(self.msg or 'expected a list or tuple')
+        if len(v) != len(self._schemas):
+            raise ExactSequenceInvalid(
+                self.msg or 'length of value must be exactly %d' % len(self._schemas)
+            )
         try:
             v = type(v)(schema(x) for x, schema in zip(v, self._schemas))
         except Invalid as e:

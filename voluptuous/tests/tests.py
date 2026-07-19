@@ -86,6 +86,15 @@ def test_exact_sequence():
     assert schema([1, 2]) == [1, 2]
 
 
+def test_exact_sequence_wrong_length_message():
+    """A length mismatch must yield a useful message, not the literal 'None'."""
+    schema = Schema(ExactSequence([int, int]))
+    with raises(MultipleInvalid, 'length of value must be exactly 2'):
+        schema([1, 2, 3])
+    with raises(MultipleInvalid, 'expected a list or tuple'):
+        schema('ab')
+
+
 def test_required():
     """Verify that Required works."""
     schema = Schema({Required('q'): int})
